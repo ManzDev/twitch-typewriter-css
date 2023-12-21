@@ -13,6 +13,7 @@ body {
 .container {
   display: grid;
   place-items: center;
+  overflow: hidden;
 }
 
 typewriter-css {

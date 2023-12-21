@@ -1,3 +1,5 @@
+import { playSound } from "@/modules/playSound.js";
+
 class TypewriterCarriage extends HTMLElement {
   constructor() {
     super();
@@ -140,6 +142,23 @@ class TypewriterCarriage extends HTMLElement {
 
   connectedCallback() {
     this.render();
+  }
+
+  cr() {
+    const keyframes = [
+      { transform: "translateX(-75px)" },
+      { transform: "translateX(75px)" }
+    ];
+
+    const options = {
+      duration: 400,
+      delay: 200,
+      easing: "linear"
+    };
+
+    playSound("ding");
+    setTimeout(playSound("carriage"), 200);
+    return this.animate(keyframes, options);
   }
 
   render() {

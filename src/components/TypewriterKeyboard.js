@@ -1,43 +1,29 @@
+import { playSound } from "@/modules/playSound.js";
+
 const KEYS = [
   "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "+", "-",
   "q", "w", "e", "r", "t", "y", "u", "i", "o", "p", "|",
   "capslock", "a", "s", "d", "f", "g", "h", "j", "k", "l", ".", "enter",
-  "shift", "z", "x", "c", "v", "b", "n", "m", "<", ">", "/"
+  "shift", "z", "x", "c", "v", "b", "n", "m", "<", ">", "/", " "
 ];
-const SOUNDS = ["key-1", "key-2", "ding-1", "ding-2", "carriage"];
 
-const preloadSound = (id) => {
-  const link = document.createElement("link");
-  link.rel = "preload";
-  link.as = "audio";
-  link.href = `${location.href}/sounds/${id}.mp3`;
-  document.head.append(link);
+const EXCEPTION_KEYS = {
+  "+": "plus",
+  "|": "pipe",
+  "<": "less",
+  ">": "great",
+  ".": "dot",
+  "/": "slash",
+  " ": "space"
 };
 
-const preloadSounds = () => {
-  SOUNDS.forEach(id => preloadSound(id));
+const mapKey = (key) => {
+  const isException = Object.keys(EXCEPTION_KEYS).includes(key);
+  const map = isException ? EXCEPTION_KEYS[key] : key.toLowerCase();
+  return `.key-${map}`;
 };
 
-const play = (id) => {
-  const audio = new Audio(`sounds/${id}.mp3`);
-  audio.play();
-};
-
-const playSound = (id) => {
-  if (id === "key" || id === "ding") {
-    const n = 1 + Math.floor(Math.random() * 2);
-    play(`${id}-${n}`);
-  } else if (id === "carriage") {
-    play(id);
-  }
-};
-
-preloadSounds();
-
-setInterval(() => {
-  playSound("ding");
-  setTimeout(() => playSound("carriage"), 200);
-}, 5700);
+const isValidKey = (key) => KEYS.includes(key.toLowerCase());
 
 class TypewriterKeyboard extends HTMLElement {
   constructor() {
@@ -59,7 +45,7 @@ class TypewriterKeyboard extends HTMLElement {
       .container {
         width: 90%;
         height: 80%;
-        background: #392f2d;
+        background: #222;
         border-radius: 0 0 40px 40px;
         position: relative;
         overflow: hidden;
@@ -93,6 +79,7 @@ class TypewriterKeyboard extends HTMLElement {
 
       .key {
         --size: 25px;
+        --shadow-key-color: color-mix(in srgb, var(--key-color), black 50%);
 
         width: var(--size);
         height: var(--size);
@@ -103,11 +90,17 @@ class TypewriterKeyboard extends HTMLElement {
         display: grid;
         place-items: center;
         font-family: Jost, sans-serif;
-        box-shadow: 0 3px 0 #0005;
+        box-shadow: 0 3px 0 var(--shadow-key-color);
+        position: relative;
+        top: 0;
 
         &.key-space {
           width: 300px;
           border-radius: 8px;
+        }
+
+        &.active {
+          top: 3px;
         }
       }
 
@@ -119,7 +112,8 @@ class TypewriterKeyboard extends HTMLElement {
 
       .row:nth-child(3) :is(.key:first-child, .key:last-child),
       .key-space {
-        --key-color: #ff8690;
+        --key-color: var(--bgcolor);
+        color: #333;
       }
 
       .row:nth-child(3) {
@@ -128,15 +122,14 @@ class TypewriterKeyboard extends HTMLElement {
           position: absolute;
           width: 1px;
           background: var(--line-color);
-          height: 175px;
-          transform: translate(0, -85px);
+          height: 185px;
           z-index: -1;
           bottom: 0;
         }
 
         & .key:nth-child(3)::before,
         & .key:nth-child(10)::before {
-          bottom: -55px;
+          bottom: -50px;
         }
       }
 
@@ -145,11 +138,10 @@ class TypewriterKeyboard extends HTMLElement {
           content: "";
           position: absolute;
           width: 1px;
-          height: 140px;
+          height: 150px;
           background: var(--line-color);
-          transform: translate(0, -50px);
+          bottom: 0px;
           z-index: -1;
-          bottom: 0;
         }
       }
     `;
@@ -158,11 +150,32 @@ class TypewriterKeyboard extends HTMLElement {
   connectedCallback() {
     this.render();
     addEventListener("keydown", (ev) => this.onKey(ev.key));
+    addEventListener("keyup", (ev) => this.onReleaseKey(ev.key));
   }
 
   onKey(key) {
-    const isValidKey = KEYS.includes(key.toLowerCase());
-    isValidKey && playSound("key");
+    if (!isValidKey(key) || this.blocked) return;
+
+    const selectedKey = this.shadowRoot.querySelector(mapKey(key));
+    selectedKey.classList.add("active");
+    playSound("key");
+    const event = new CustomEvent("KEY_PRESSED", { bubbles: true, composed: true, detail: { key } });
+    this.dispatchEvent(event);
+  }
+
+  onReleaseKey(key) {
+    if (!isValidKey(key) || this.blocked) return;
+
+    const keys = [...this.shadowRoot.querySelectorAll(".row .key")];
+    keys.forEach(key => key.classList.remove("active"));
+  }
+
+  block() {
+    this.blocked = true;
+  }
+
+  unblock() {
+    this.blocked = false;
   }
 
   render() {
@@ -208,7 +221,7 @@ class TypewriterKeyboard extends HTMLElement {
           <div class="key-8 key">8</div>
           <div class="key-9 key">9</div>
           <div class="key-0 key">0</div>
-          <div class="key-+ key">+</div>
+          <div class="key-plus key">+</div>
           <div class="key-- key">-</div>
         </div>
 
@@ -223,7 +236,7 @@ class TypewriterKeyboard extends HTMLElement {
           <div class="key-i key">I</div>
           <div class="key-o key">O</div>
           <div class="key-p key">P</div>
-          <div class="key-| key">|</div>
+          <div class="key-pipe key">|</div>
         </div>
 
         <div class="row">

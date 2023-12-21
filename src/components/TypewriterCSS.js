@@ -6,6 +6,7 @@ class TypewriterCSS extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
+    this.carriageState = 15;
   }
 
   static get styles() {
@@ -13,7 +14,9 @@ class TypewriterCSS extends HTMLElement {
       :host {
         --typewriter-width: 550px;
         --typewriter-height: 800px;
-        --bgcolor: #c84c56;
+        --carriage-state: 15;
+        --shadow-color: #c84c56;
+        --bgcolor: #ff606d;
         --iron-color: #111;
       }
 
@@ -45,7 +48,7 @@ class TypewriterCSS extends HTMLElement {
         & typewriter-carriage {
           position: absolute;
           bottom: 1rem;
-          animation: type 6s steps(15) infinite;
+          transform: translateX(calc(-75px + calc(var(--carriage-state) * 10px)));
         }
       }
 
@@ -55,26 +58,52 @@ class TypewriterCSS extends HTMLElement {
       }
 
       .typewriter-keyboard {
-        background: var(--bgcolor);
-        border-radius: 0 0 25px 25px;
+        background: var(--shadow-color);
+        border-radius: 0 0 48px 48px;
       }
 
-      typewriter-keyboard {
+      .typebar {
+        --size: 12px;
+
+        position: absolute;
+        background: #151515;
+        width: var(--size);
+        height: 0;
+        z-index: 10;
+        bottom: -150px;
+        left: calc(50% - calc(var(--size) / 2));
+
+        transition: height 0.05s ease-in-out;
       }
 
-      @keyframes type {
-        0%, 100% {
-          transform: translateX(75px);
-        }
-        90% {
-          transform: translateX(-75px);
-        }
+      /*
+      :host(:hover) .typebar {
+        height: 215px;
       }
+      */
     `;
   }
 
   connectedCallback() {
     this.render();
+    document.addEventListener("KEY_PRESSED", ({ detail }) => this.updateState());
+  }
+
+  updateState() {
+    if (this.carriageState > 0) {
+      this.carriageState--;
+    } else {
+      const keyboard = this.shadowRoot.querySelector("typewriter-keyboard");
+      keyboard.block();
+      const carriage = this.shadowRoot.querySelector("typewriter-carriage");
+      const animation = carriage.cr();
+      animation.finished.then(() => {
+        this.carriageState = 15;
+        this.style.setProperty("--carriage-state", this.carriageState);
+        keyboard.unblock();
+      });
+    }
+    this.style.setProperty("--carriage-state", this.carriageState);
   }
 
   render() {
@@ -84,6 +113,7 @@ class TypewriterCSS extends HTMLElement {
       <div class="typewriter-carriage">
         <div class="carriage-back"></div>
         <typewriter-carriage></typewriter-carriage>
+        <div class="typebar"></div>
       </div>
       <div class="typewriter-typebars">
         <typewriter-typebars></typewriter-typebars>

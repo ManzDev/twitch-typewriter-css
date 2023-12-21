@@ -7,13 +7,12 @@ class TypewriterTypebars extends HTMLElement {
   static get styles() {
     return /* css */`
       :host {
-        --light-color: #ff606d;
       }
 
       .container {
         width: 100%;
         height: 300px;
-        background: var(--light-color);
+        background: var(--shadow-color);
         overflow: hidden;
         position: relative;
         display: grid;
@@ -34,7 +33,7 @@ class TypewriterTypebars extends HTMLElement {
 
         background-image:
           repeating-conic-gradient(
-            var(--light-color) -135deg 126deg,
+            var(--shadow-color) -135deg 126deg,
             #af1a20 126deg 135deg,
             transparent 135deg 225.5deg,
             #af1a20 226deg 235deg
@@ -57,6 +56,20 @@ class TypewriterTypebars extends HTMLElement {
         bottom: 150px;
         z-index: 5;
       }
+
+      /*
+      .typebar {
+        --size: 8px;
+
+        position: absolute;
+        background: gold;
+        width: var(--size);
+        height: 300px;
+        z-index: 5;
+        bottom: 0;
+        left: calc(50% - calc(var(--size) / 2));
+      }
+      */
     `;
   }
 
@@ -68,7 +81,8 @@ class TypewriterTypebars extends HTMLElement {
     this.shadowRoot.innerHTML = /* html */`
     <style>${TypewriterTypebars.styles}</style>
     <div class="container">
-      <div class="circle-gap"></div>
+      <div class="circle-gap">
+      </div>
     </div>`;
   }
 }
