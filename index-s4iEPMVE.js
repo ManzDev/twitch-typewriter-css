@@ -1,4 +1,4 @@
-(function(){const e=document.createElement("link").relList;if(e&&e.supports&&e.supports("modulepreload"))return;for(const i of document.querySelectorAll('link[rel="modulepreload"]'))v(i);new MutationObserver(i=>{for(const r of i)if(r.type==="childList")for(const d of r.addedNodes)d.tagName==="LINK"&&d.rel==="modulepreload"&&v(d)}).observe(document,{childList:!0,subtree:!0});function n(i){const r={};return i.integrity&&(r.integrity=i.integrity),i.referrerPolicy&&(r.referrerPolicy=i.referrerPolicy),i.crossOrigin==="use-credentials"?r.credentials="include":i.crossOrigin==="anonymous"?r.credentials="omit":r.credentials="same-origin",r}function v(i){if(i.ep)return;i.ep=!0;const r=n(i);fetch(i.href,r)}})();class a extends HTMLElement{constructor(){super(),this.attachShadow({mode:"open"})}static get styles(){return`
+(function(){const e=document.createElement("link").relList;if(e&&e.supports&&e.supports("modulepreload"))return;for(const t of document.querySelectorAll('link[rel="modulepreload"]'))s(t);new MutationObserver(t=>{for(const r of t)if(r.type==="childList")for(const d of r.addedNodes)d.tagName==="LINK"&&d.rel==="modulepreload"&&s(d)}).observe(document,{childList:!0,subtree:!0});function a(t){const r={};return t.integrity&&(r.integrity=t.integrity),t.referrerPolicy&&(r.referrerPolicy=t.referrerPolicy),t.crossOrigin==="use-credentials"?r.credentials="include":t.crossOrigin==="anonymous"?r.credentials="omit":r.credentials="same-origin",r}function s(t){if(t.ep)return;t.ep=!0;const r=a(t);fetch(t.href,r)}})();const k=["key-1","key-2","ding-1","ding-2","carriage"],g=i=>{const e=document.createElement("link");e.rel="preload",e.as="audio",e.href=`${location.href}/sounds/${i}.mp3`,document.head.append(e)},u=()=>{k.forEach(i=>g(i))};u();const y=i=>{new Audio(`sounds/${i}.mp3`).play()},o=i=>{if(i==="key"||i==="ding"){const e=1+Math.floor(Math.random()*2);y(`${i}-${e}`)}else i==="carriage"&&y(i)};class c extends HTMLElement{constructor(){super(),this.attachShadow({mode:"open"})}static get styles(){return`
       :host {
         --offset: 65px;
         --carriage-excess: calc(var(--offset) / 3);
@@ -128,8 +128,8 @@
         width: 50px;
         height: 80px;
       }
-    `}connectedCallback(){this.render()}render(){this.shadowRoot.innerHTML=`
-    <style>${a.styles}</style>
+    `}connectedCallback(){this.render()}cr(){const e=[{transform:"translateX(-75px)"},{transform:"translateX(75px)"}],a={duration:400,delay:200,easing:"linear"};return o("ding"),setTimeout(o("carriage"),200),this.animate(e,a)}render(){this.shadowRoot.innerHTML=`
+    <style>${c.styles}</style>
     <div class="container">
       <div class="paper-back"></div>
       <div class="carriage-tip left">
@@ -146,15 +146,14 @@
         <p>Manz.dev</p>
       </div>
       <div class="carriage-lock"></div>
-    </div>`}}customElements.define("typewriter-carriage",a);class o extends HTMLElement{constructor(){super(),this.attachShadow({mode:"open"})}static get styles(){return`
+    </div>`}}customElements.define("typewriter-carriage",c);class l extends HTMLElement{constructor(){super(),this.attachShadow({mode:"open"})}static get styles(){return`
       :host {
-        --light-color: #ff606d;
       }
 
       .container {
         width: 100%;
         height: 300px;
-        background: var(--light-color);
+        background: var(--shadow-color);
         overflow: hidden;
         position: relative;
         display: grid;
@@ -175,7 +174,7 @@
 
         background-image:
           repeating-conic-gradient(
-            var(--light-color) -135deg 126deg,
+            var(--shadow-color) -135deg 126deg,
             #af1a20 126deg 135deg,
             transparent 135deg 225.5deg,
             #af1a20 226deg 235deg
@@ -198,11 +197,26 @@
         bottom: 150px;
         z-index: 5;
       }
+
+      /*
+      .typebar {
+        --size: 8px;
+
+        position: absolute;
+        background: gold;
+        width: var(--size);
+        height: 300px;
+        z-index: 5;
+        bottom: 0;
+        left: calc(50% - calc(var(--size) / 2));
+      }
+      */
     `}connectedCallback(){this.render()}render(){this.shadowRoot.innerHTML=`
-    <style>${o.styles}</style>
+    <style>${l.styles}</style>
     <div class="container">
-      <div class="circle-gap"></div>
-    </div>`}}customElements.define("typewriter-typebars",o);const p=["1","2","3","4","5","6","7","8","9","0","+","-","q","w","e","r","t","y","u","i","o","p","|","capslock","a","s","d","f","g","h","j","k","l",".","enter","shift","z","x","c","v","b","n","m","<",">","/"],k=["key-1","key-2","ding-1","ding-2","carriage"],h=t=>{const e=document.createElement("link");e.rel="preload",e.as="audio",e.href=`${location.href}/sounds/${t}.mp3`,document.head.append(e)},g=()=>{k.forEach(t=>h(t))},y=t=>{new Audio(`sounds/${t}.mp3`).play()},s=t=>{if(t==="key"||t==="ding"){const e=1+Math.floor(Math.random()*2);y(`${t}-${e}`)}else t==="carriage"&&y(t)};g();setInterval(()=>{s("ding"),setTimeout(()=>s("carriage"),200)},5700);class c extends HTMLElement{constructor(){super(),this.attachShadow({mode:"open"})}static get styles(){return`
+      <div class="circle-gap">
+      </div>
+    </div>`}}customElements.define("typewriter-typebars",l);const f=["1","2","3","4","5","6","7","8","9","0","+","-","q","w","e","r","t","y","u","i","o","p","|","capslock","a","s","d","f","g","h","j","k","l",".","enter","shift","z","x","c","v","b","n","m","<",">","/"," "],p={"+":"plus","|":"pipe","<":"less",">":"great",".":"dot","/":"slash"," ":"space"},b=i=>`.key-${Object.keys(p).includes(i)?p[i]:i.toLowerCase()}`,h=i=>f.includes(i.toLowerCase());class n extends HTMLElement{constructor(){super(),this.attachShadow({mode:"open"})}static get styles(){return`
       :host {
         --line-color: #8f3630;
         --key-color: #f5e9cf;
@@ -215,7 +229,7 @@
       .container {
         width: 90%;
         height: 80%;
-        background: #392f2d;
+        background: #222;
         border-radius: 0 0 40px 40px;
         position: relative;
         overflow: hidden;
@@ -249,6 +263,7 @@
 
       .key {
         --size: 25px;
+        --shadow-key-color: color-mix(in srgb, var(--key-color), black 50%);
 
         width: var(--size);
         height: var(--size);
@@ -259,11 +274,17 @@
         display: grid;
         place-items: center;
         font-family: Jost, sans-serif;
-        box-shadow: 0 3px 0 #0005;
+        box-shadow: 0 3px 0 var(--shadow-key-color);
+        position: relative;
+        top: 0;
 
         &.key-space {
           width: 300px;
           border-radius: 8px;
+        }
+
+        &.active {
+          top: 3px;
         }
       }
 
@@ -275,7 +296,8 @@
 
       .row:nth-child(3) :is(.key:first-child, .key:last-child),
       .key-space {
-        --key-color: #ff8690;
+        --key-color: var(--bgcolor);
+        color: #333;
       }
 
       .row:nth-child(3) {
@@ -284,15 +306,14 @@
           position: absolute;
           width: 1px;
           background: var(--line-color);
-          height: 175px;
-          transform: translate(0, -85px);
+          height: 185px;
           z-index: -1;
           bottom: 0;
         }
 
         & .key:nth-child(3)::before,
         & .key:nth-child(10)::before {
-          bottom: -55px;
+          bottom: -50px;
         }
       }
 
@@ -301,15 +322,14 @@
           content: "";
           position: absolute;
           width: 1px;
-          height: 140px;
+          height: 150px;
           background: var(--line-color);
-          transform: translate(0, -50px);
+          bottom: 0px;
           z-index: -1;
-          bottom: 0;
         }
       }
-    `}connectedCallback(){this.render(),addEventListener("keydown",e=>this.onKey(e.key))}onKey(e){p.includes(e.toLowerCase())&&s("key")}render(){this.shadowRoot.innerHTML=`
-    <style>${c.styles}</style>
+    `}connectedCallback(){this.render(),addEventListener("keydown",e=>this.onKey(e.key)),addEventListener("keyup",e=>this.onReleaseKey(e.key))}onKey(e){if(!h(e)||this.blocked)return;this.shadowRoot.querySelector(b(e)).classList.add("active"),o("key");const s=new CustomEvent("KEY_PRESSED",{bubbles:!0,composed:!0,detail:{key:e}});this.dispatchEvent(s)}onReleaseKey(e){if(!h(e)||this.blocked)return;[...this.shadowRoot.querySelectorAll(".row .key")].forEach(s=>s.classList.remove("active"))}block(){this.blocked=!0}unblock(){this.blocked=!1}render(){this.shadowRoot.innerHTML=`
+    <style>${n.styles}</style>
     <div class="container">
 
       <div class="keylines">
@@ -350,7 +370,7 @@
           <div class="key-8 key">8</div>
           <div class="key-9 key">9</div>
           <div class="key-0 key">0</div>
-          <div class="key-+ key">+</div>
+          <div class="key-plus key">+</div>
           <div class="key-- key">-</div>
         </div>
 
@@ -365,7 +385,7 @@
           <div class="key-i key">I</div>
           <div class="key-o key">O</div>
           <div class="key-p key">P</div>
-          <div class="key-| key">|</div>
+          <div class="key-pipe key">|</div>
         </div>
 
         <div class="row">
@@ -402,11 +422,13 @@
         </div>
       </div>
 
-    </div>`}}customElements.define("typewriter-keyboard",c);class l extends HTMLElement{constructor(){super(),this.attachShadow({mode:"open"})}static get styles(){return`
+    </div>`}}customElements.define("typewriter-keyboard",n);class v extends HTMLElement{constructor(){super(),this.attachShadow({mode:"open"}),this.carriageState=15}static get styles(){return`
       :host {
         --typewriter-width: 550px;
         --typewriter-height: 800px;
-        --bgcolor: #c84c56;
+        --carriage-state: 15;
+        --shadow-color: #c84c56;
+        --bgcolor: #ff606d;
         --iron-color: #111;
       }
 
@@ -438,7 +460,7 @@
         & typewriter-carriage {
           position: absolute;
           bottom: 1rem;
-          animation: type 6s steps(15) infinite;
+          transform: translateX(calc(-75px + calc(var(--carriage-state) * 10px)));
         }
       }
 
@@ -448,27 +470,36 @@
       }
 
       .typewriter-keyboard {
-        background: var(--bgcolor);
-        border-radius: 0 0 25px 25px;
+        background: var(--shadow-color);
+        border-radius: 0 0 48px 48px;
       }
 
-      typewriter-keyboard {
+      .typebar {
+        --size: 12px;
+
+        position: absolute;
+        background: #151515;
+        width: var(--size);
+        height: 0;
+        z-index: 10;
+        bottom: -150px;
+        left: calc(50% - calc(var(--size) / 2));
+
+        transition: height 0.05s ease-in-out;
       }
 
-      @keyframes type {
-        0%, 100% {
-          transform: translateX(75px);
-        }
-        90% {
-          transform: translateX(-75px);
-        }
+      /*
+      :host(:hover) .typebar {
+        height: 215px;
       }
-    `}connectedCallback(){this.render()}render(){this.shadowRoot.innerHTML=`
-    <style>${l.styles}</style>
+      */
+    `}connectedCallback(){this.render(),document.addEventListener("KEY_PRESSED",({detail:e})=>this.updateState())}updateState(){if(this.carriageState>0)this.carriageState--;else{const e=this.shadowRoot.querySelector("typewriter-keyboard");e.block(),this.shadowRoot.querySelector("typewriter-carriage").cr().finished.then(()=>{this.carriageState=15,this.style.setProperty("--carriage-state",this.carriageState),e.unblock()})}this.style.setProperty("--carriage-state",this.carriageState)}render(){this.shadowRoot.innerHTML=`
+    <style>${v.styles}</style>
     <div class="container">
       <div class="typewriter-carriage">
         <div class="carriage-back"></div>
         <typewriter-carriage></typewriter-carriage>
+        <div class="typebar"></div>
       </div>
       <div class="typewriter-typebars">
         <typewriter-typebars></typewriter-typebars>
@@ -476,4 +507,4 @@
       <div class="typewriter-keyboard">
         <typewriter-keyboard></typewriter-keyboard>
       </div>
-    </div>`}}customElements.define("typewriter-css",l);
+    </div>`}}customElements.define("typewriter-css",v);
